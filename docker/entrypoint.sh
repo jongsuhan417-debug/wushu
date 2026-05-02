@@ -25,6 +25,24 @@ export WUSHU_POSE_MODEL="$MODEL_PATH"
 echo "[entrypoint] Initializing database..."
 python /home/user/app/scripts/init_db.py
 
+# Storage backend self-check (verifies R2 reachability from container)
+echo "[entrypoint] Checking storage backend..."
+python -c "
+import sys
+sys.path.insert(0, '/home/user/app')
+from core.storage import get_storage
+try:
+    s = get_storage()
+    print(f'[storage] backend = {s.backend_name}')
+    if s.backend_name == 'r2':
+        s.client.head_bucket(Bucket=s.bucket)
+        print(f'[storage] R2 bucket {s.bucket!r} reachable from container ✓')
+    else:
+        print(f'[storage] LocalStorage at {s.root}')
+except Exception as e:
+    print(f'[storage] WARN: {type(e).__name__}: {e}', file=sys.stderr)
+" || echo "[entrypoint] Storage check failed (container will still start; first upload will retry)"
+
 # Launch Streamlit
 echo "[entrypoint] Starting Streamlit on :${STREAMLIT_SERVER_PORT}..."
 exec streamlit run /home/user/app/apps/workbench/app.py
