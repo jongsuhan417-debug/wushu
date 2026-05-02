@@ -46,4 +46,8 @@ RUN chmod +x /home/user/entrypoint.sh
 
 EXPOSE 8501
 
+# Container-level health check so HF Spaces sees us as healthy
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD curl -fsS http://localhost:8501/_stcore/health || exit 1
+
 ENTRYPOINT ["/home/user/entrypoint.sh"]
