@@ -1,0 +1,28 @@
+.venv/
+venv/
+__pycache__/
+*.pyc
+.env
+.env.local
+
+# Local data — stays on disk only when STORAGE_BACKEND=local; never commit
+data/workbench.db
+data/videos/
+data/poses/
+data/renders/
+data/references/*.json
+data/translation_cache.json
+data/models/
+
+# Editor / OS
+.streamlit/secrets.toml
+.idea/
+.vscode/
+.DS_Store
+*.log
+
+# Portable cloudflared binary
+.bin/
+
+# Hugging Face Spaces metadata cache (if any)
+.hf_cache/

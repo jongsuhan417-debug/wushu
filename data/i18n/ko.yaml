@@ -1,0 +1,209 @@
+app:
+  title: 우슈 평가 워크벤치
+  subtitle: 武术评估工作台
+  tagline: AI 모션 인식 우슈 품세 채점 시스템
+  language_toggle: 言語
+  brand: 우슈 워크벤치
+  dev_badge: 🔧 개발 단계
+  dev_notice_short: 앱 출시 전 AI 학습용 내부 도구입니다
+  dev_notice_long: |
+    이 워크벤치는 **모바일 앱 출시 전 AI를 학습·튜닝하기 위한 내부 도구**입니다.
+    학생용 실제 앱은 이 워크벤치와는 별도로 개발됩니다.
+    여기서 자문가가 등록한 시범 영상과 의견은 모두 최종 앱의 기반이 됩니다.
+
+nav:
+  home: 홈
+  reference_studio: 시범 영상
+  test_lab: AI 테스트
+  forms_catalog: 품세 관리
+  guide: 사용 가이드
+
+home:
+  greeting_morning: 안녕하세요
+  greeting_day: 안녕하세요
+  greeting_evening: 좋은 저녁입니다
+  forms_total: 등록된 폼
+  forms_ready: 활성화된 폼
+  references_total: 시범 영상
+  tests_total: 테스트
+  recent_activity: 최근 활동
+  no_activity: 아직 활동 없음.
+  cta_first_title: 시범 영상부터 등록해보세요
+  cta_first_body: 자문가의 동작을 AI에게 학습시키는 첫 단계입니다. 1분짜리 영상 한 편이면 시작 가능.
+  cta_first_btn: 시범 영상 등록 →
+  cta_guide_btn: 사용 가이드 먼저 보기
+  hint_sidebar: 왼쪽 사이드바에서 페이지를 이동할 수 있습니다.
+  feedback_title: 💬 자문가 의견 (자유롭게)
+  feedback_help: |
+    UI·사용감·기능 요청만이 아니라 **기획 의도, 평가 흐름, 학생 연습 순서, 채점 기준,
+    추가하고 싶은 폼, 시스템에 대한 어떤 생각이든 자유롭게** 적어주세요.
+    中文로 적어도 자동 번역됩니다. **자세하게 설명해주실수록 시스템에 정확히 반영됩니다.**
+  feedback_lang: 작성 언어
+  feedback_placeholder: |
+    예시:
+    - "평가 흐름은 이런 순서가 자연스러워요. 먼저 ... 그다음 ..."
+    - "학생들이 보통 1단 장권을 배우는 순서는 ..."
+    - "이 동작에서는 무릎 각도보다 발 위치가 더 중요합니다"
+    - "단증 시험 채점은 일반적으로 ... 식으로 진행됩니다"
+    - "이 폼이 추가로 있으면 좋겠어요: ..."
+    - "메뉴 글자가 작아요" / "이 버튼 위치가 어색해요"
+  feedback_submit: 의견 보내기
+  feedback_saved: 의견이 저장되었습니다. 감사합니다!
+  feedback_history: 이전 의견 ({count}건)
+  feedback_no_history: 아직 의견이 없습니다.
+  feedback_resolved: ✅ 처리 완료
+  feedback_pending: ⏳ 검토 대기
+  feedback_mark_resolved: 처리 완료 표시
+  feedback_mark_pending: 검토 대기로 되돌리기
+  feedback_delete: 삭제
+  feedback_pending_badge: "검토 대기 {count}건"
+
+forms:
+  status_draft: 초안
+  status_recorded: 녹화됨
+  status_ready: 활성화됨
+  no_forms: 등록된 품세가 없습니다.
+  add_new: 새 품세 추가
+  dan_level: "{level}단"
+  dan_1: 1단 (초급)
+  dan_2: 2단 (중급)
+  dan_3: 3단 (고급)
+  takes_count: "시범 {count}개"
+  duration_estimate: "예상 길이 {sec}초"
+  ready_for_scoring: 채점 준비 완료
+  needs_more_takes: "시범 {needed}개 더 권장"
+
+reference_studio:
+  title: 시범 영상
+  subtitle: 자문가의 시범 영상을 올려 표준 동작을 학습시킵니다
+  guidelines_title: AI가 정리한 가이드라인 (CWA 段位制 기준)
+  guidelines_help: 公式 中国武术段位制 教程에서 검증된 정보입니다. 미확인 항목은 자문가가 보완해주세요.
+  guidelines_source: 출처
+  guidelines_verified: 검증된 사실
+  guidelines_pending: 보완 필요 (자문가 확인)
+  guidelines_view_source: 公式 자료 보기
+  expert_feedback_title: 자문가 의견 (자유 텍스트)
+  expert_feedback_help: 가이드라인 수정 의견·동작 세부 보완·임계값 변경 등 무엇이든 적어주세요. 자동으로 한국어 번역되어 개발자에게 전달됩니다.
+  expert_feedback_placeholder: "예 - 长拳 1단 起势는 차렷 자세가 아니라 拱手 자세입니다. 또 弓步冲拳 시 뒷발은 약 165도여야 합니다."
+  expert_feedback_save: 의견 저장
+  expert_feedback_saved: 자문가 의견이 저장되었습니다.
+  expert_feedback_lang: 작성 언어
+  select_form: 품세 선택
+  no_form_selected: 먼저 품세를 선택해주세요.
+  current_takes: 등록된 시범 영상
+  no_takes: 아직 시범 영상이 없습니다. 첫 영상을 올려보세요.
+  upload_new: 새 시범 올리기
+  upload_label: 영상 파일 선택 (mp4, mov)
+  self_rating: 이 시범의 자기 평가
+  self_rating_help: 본인이 보기에 이 시범이 얼마나 정확한지 (100점 = 완벽한 시범)
+  notes_label: 메모 (선택)
+  notes_placeholder: "예 - 측면 각도, 평소 컨디션, 특이 사항"
+  process_btn: 포즈 추출 및 저장
+  processing_extract: 포즈 추출 중...
+  processing_render: 골격 오버레이 생성 중...
+  processing_save: 저장 중...
+  saved_success: 시범 영상이 저장되었습니다.
+  preview: 미리보기 (골격 오버레이)
+  activate_form: 이 품세를 채점 가능 상태로 활성화
+  activate_help: 시범 영상 1개로도 활성화 가능하지만 3개 이상 권장합니다 (변동 범위 학습용).
+  activated: 활성화 완료
+  delete_take: 삭제
+  take_label: "시범 {n}"
+  take_meta: "자기 평가 {rating}점 · {date}"
+
+test_lab:
+  title: AI 테스트
+  subtitle: 변형 영상을 올려 AI가 정확히 반응하는지 확인합니다
+  select_form: 테스트할 품세
+  form_not_ready: "이 품세는 아직 활성화되지 않았습니다. 시범 영상을 먼저 등록해주세요."
+  add_test: 새 테스트 추가
+  upload_label: 테스트 영상
+  intent_label: 의도 / 조건
+  intent_placeholder: "예 - 마보 무릎 75°로 일부러 굽힘, 측면 촬영, 정상 시범"
+  expected_label: 기대 동작
+  expected_catch: AI가 잡아야 함 (오류 일부러 만듦)
+  expected_pass: AI가 무시해야 함 (정상 시범)
+  expected_either: 무엇이든 (탐색용)
+  tags_label: 태그 (쉼표 구분)
+  tags_placeholder: "예 - 마보, 무릎각도, 측면"
+  run_btn: 채점 실행
+  results_title: 최근 테스트 결과
+  no_tests: 아직 테스트 기록이 없습니다. 첫 영상을 올려보세요.
+  ai_score: AI 점수
+  detected_stances: 감지된 보형
+  detected_issues: AI가 잡은 문제
+  no_issues: 별다른 문제 없음
+  expected: 기대
+  verdict_correct: AI가 맞게 잡음
+  verdict_missed: AI가 놓침
+  verdict_wrong: AI가 잘못 잡음
+  verdict_pending: 판정 대기
+  add_comment: 코멘트 추가 (자유 텍스트)
+  comment_placeholder: "예 - 이 무릎 각도는 잡았어야 했음"
+  submit_verdict: 판정 제출
+  rerun_all: 전체 회귀 테스트 (모든 테스트 다시 채점)
+  delete: 삭제
+
+forms_catalog:
+  title: 품세 관리
+  subtitle: 1·2·3단 우슈 품세를 추가하거나 정보를 수정합니다
+  list_title: 등록된 품세
+  edit_title: 품세 편집
+  add_title: 새 품세 추가
+  field_id: ID (영문 소문자, 언더스코어)
+  field_dan: 단 레벨
+  field_name_ko: 한국어 이름
+  field_name_zh: 중국어 이름
+  field_name_en: 영어 이름
+  field_duration: 예상 길이 (초)
+  field_description_ko: 설명 (한국어)
+  field_description_zh: 설명 (중국어)
+  save: 저장
+  cancel: 취소
+  added: 품세가 추가되었습니다.
+  updated: 품세가 업데이트되었습니다.
+  deleted: 품세가 삭제되었습니다.
+
+scoring:
+  total: 총점
+  level_a: A (동작 품질)
+  level_b: B (연무 수준)
+  level_c: C (난도)
+  out_of: "/ 10"
+  segment: 동작 구간
+  joint_angle: 관절 각도
+  ideal: 표준
+  current: 현재
+  delta: 차이
+  in_range: 범위 내
+  borderline: 경계
+  out_of_range: 범위 벗어남
+
+stances:
+  unknown: 알 수 없음
+  detected_at: "{time}초 — {stance}"
+
+translation:
+  original: 원문
+  translated: 번역
+  retranslate: 번역 다시
+  from_zh: 중국어 → 한국어
+  from_ko: 한국어 → 중국어
+
+common:
+  yes: 예
+  no: 아니오
+  loading: 불러오는 중...
+  error: 오류
+  back: 뒤로
+  next: 다음
+  search: 검색
+  none: 없음
+  required: 필수
+  optional: 선택
+  save: 저장
+  delete: 삭제
+  confirm_delete: 정말 삭제하시겠어요?
+  download: 다운로드
+  copy: 복사
+  copied: 복사됨

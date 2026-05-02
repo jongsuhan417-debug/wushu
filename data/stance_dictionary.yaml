@@ -1,0 +1,133 @@
+# 보형(步型) 사전 — 우슈 표준 자세
+# Korean and Chinese names share the same Hanja origin, mapping is 1:1.
+# Joint angle thresholds are GENERIC starting points. Expert reviewer should refine.
+
+stances:
+  mabu:
+    name:
+      ko: 마보
+      zh: 马步
+      en: Horse Stance
+    pinyin: mǎbù
+    description:
+      ko: 두 발을 넓게 벌리고 무릎을 굽힌 말 자세
+      zh: 双脚平行分开,屈膝下蹲
+    key_angles:
+      knee_left:
+        joint: [hip_left, knee_left, ankle_left]
+        ideal_deg: 90
+        tolerance_deg: 15
+      knee_right:
+        joint: [hip_right, knee_right, ankle_right]
+        ideal_deg: 90
+        tolerance_deg: 15
+      torso_pitch:
+        joint: [shoulder_mid, hip_mid, knee_mid]
+        ideal_deg: 180
+        tolerance_deg: 15
+    feet_distance_shoulder_widths:
+      ideal: 2.0
+      tolerance: 0.4
+    detection_priority: 1
+
+  gongbu:
+    name:
+      ko: 궁보
+      zh: 弓步
+      en: Bow Stance
+    pinyin: gōngbù
+    description:
+      ko: 한 발은 앞으로 굽히고 한 발은 뒤로 펴는 활 자세
+      zh: 前腿屈膝弓出,后腿绷直
+    key_angles:
+      front_knee:
+        joint: [hip_front, knee_front, ankle_front]
+        ideal_deg: 90
+        tolerance_deg: 20
+      back_knee:
+        joint: [hip_back, knee_back, ankle_back]
+        ideal_deg: 175
+        tolerance_deg: 10
+      torso_pitch:
+        joint: [shoulder_mid, hip_mid, knee_front]
+        ideal_deg: 180
+        tolerance_deg: 20
+    feet_distance_shoulder_widths:
+      ideal: 3.0
+      tolerance: 0.5
+    detection_priority: 2
+
+  xubu:
+    name:
+      ko: 허보
+      zh: 虚步
+      en: Empty Stance
+    pinyin: xūbù
+    description:
+      ko: 앞발에 무게를 거의 두지 않은 빈 자세
+      zh: 后腿屈膝承重,前腿虚点
+    key_angles:
+      back_knee:
+        joint: [hip_back, knee_back, ankle_back]
+        ideal_deg: 90
+        tolerance_deg: 20
+      front_knee:
+        joint: [hip_front, knee_front, ankle_front]
+        ideal_deg: 160
+        tolerance_deg: 20
+    weight_distribution:
+      back_leg_pct: 90
+      tolerance_pct: 10
+    detection_priority: 3
+
+  pubu:
+    name:
+      ko: 복보
+      zh: 仆步
+      en: Crouch Stance
+    pinyin: pūbù
+    description:
+      ko: 한 다리는 깊게 굽히고 다른 다리는 옆으로 곧게 편 자세
+      zh: 一腿全蹲,另一腿仆直
+    key_angles:
+      crouch_knee:
+        joint: [hip_crouch, knee_crouch, ankle_crouch]
+        ideal_deg: 30
+        tolerance_deg: 15
+      extended_knee:
+        joint: [hip_extended, knee_extended, ankle_extended]
+        ideal_deg: 175
+        tolerance_deg: 10
+    detection_priority: 4
+
+  xiebu:
+    name:
+      ko: 헐보
+      zh: 歇步
+      en: Rest Stance
+    pinyin: xiēbù
+    description:
+      ko: 두 다리를 교차해 앉는 자세
+      zh: 两腿交叉下坐
+    key_angles:
+      front_knee:
+        joint: [hip_front, knee_front, ankle_front]
+        ideal_deg: 60
+        tolerance_deg: 20
+      back_knee:
+        joint: [hip_back, knee_back, ankle_back]
+        ideal_deg: 60
+        tolerance_deg: 20
+    detection_priority: 5
+
+# 수형(手型) — 손모양 (참고용, 채점 가중치 낮음)
+hand_shapes:
+  quan:    # 권 (주먹)
+    name: { ko: 권, zh: 拳, en: Fist }
+    description: { ko: 주먹, zh: 拳头 }
+  zhang:   # 장 (손바닥)
+    name: { ko: 장, zh: 掌, en: Palm }
+    description: { ko: 손바닥, zh: 张开的手掌 }
+  gou:     # 구 (갈고리)
+    name: { ko: 구, zh: 勾, en: Hook }
+    description: { ko: 갈고리 손, zh: 钩状手 }

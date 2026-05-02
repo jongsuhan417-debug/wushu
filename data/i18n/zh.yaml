@@ -1,0 +1,210 @@
+app:
+  title: 武术评估工作台
+  subtitle: 우슈 평가 워크벤치
+  tagline: AI 动作识别武术套路评分系统
+  language_toggle: 言語
+  brand: 武术工作台
+  dev_badge: 🔧 开发阶段
+  dev_notice_short: 这是移动应用上线前用于训练 AI 的内部工具
+  dev_notice_long: |
+    本工作台是**手机应用上线前用于训练和调整 AI 的内部工具**,
+    不是给学员使用的最终产品。学员将通过将来的移动应用使用这个系统。
+
+    您在此提供的每一份示范视频和意见,都会成为最终应用的基础。
+
+nav:
+  home: 主页
+  reference_studio: 标准动作
+  test_lab: 测试
+  forms_catalog: 套路管理
+  guide: 使用指南
+
+home:
+  greeting_morning: 您好
+  greeting_day: 您好
+  greeting_evening: 晚上好
+  forms_total: 已注册套路
+  forms_ready: 已激活套路
+  references_total: 标准视频
+  tests_total: 测试
+  recent_activity: 最近活动
+  no_activity: 暂无活动。
+  cta_first_title: 先录制您的标准动作
+  cta_first_body: 这是让 AI 学习您动作的第一步。一分钟的视频就够了。
+  cta_first_btn: 录制标准动作 →
+  cta_guide_btn: 先看使用指南
+  hint_sidebar: 通过左侧边栏切换页面。
+  feedback_title: 💬 您的意见 (自由)
+  feedback_help: |
+    不仅限于 UI、使用感受、功能建议 — **任何关于产品想法、评分流程、
+    学员练习顺序、评分标准、希望增加的套路、对系统的任何建议都欢迎您自由地写下来**。
+    中文输入即可,会自动翻译。**写得越详细,越能精确反映到系统中。**
+  feedback_lang: 写作语言
+  feedback_placeholder: |
+    例如:
+    - "评分流程应该是这样的:先 ... 然后 ..."
+    - "学员一般是按照这个顺序学习一段长拳的 ..."
+    - "这个动作里,膝盖角度不如脚步位置重要"
+    - "段位制考试评分一般是这样进行的 ..."
+    - "希望可以加入这个套路 ..."
+    - "菜单文字太小" / "这个按钮位置不太合适"
+  feedback_submit: 提交意见
+  feedback_saved: 意见已保存,谢谢!
+  feedback_history: 以前的意见 ({count} 条)
+  feedback_no_history: 暂无意见。
+  feedback_resolved: ✅ 已处理
+  feedback_pending: ⏳ 待查看
+  feedback_mark_resolved: 标记为已处理
+  feedback_mark_pending: 改回待查看
+  feedback_delete: 删除
+  feedback_pending_badge: "待查看 {count} 条"
+
+forms:
+  status_draft: 草稿
+  status_recorded: 已录制
+  status_ready: 已激活
+  no_forms: 暂无注册套路。
+  add_new: 新增套路
+  dan_level: "{level}段"
+  dan_1: 一段(初级)
+  dan_2: 二段(中级)
+  dan_3: 三段(高级)
+  takes_count: "镜次 {count} 个"
+  duration_estimate: "预计时长 {sec} 秒"
+  ready_for_scoring: 可评分
+  needs_more_takes: "建议再录 {needed} 个镜次"
+
+reference_studio:
+  title: 标准动作
+  subtitle: 上传您的示范视频,让 AI 学习标准动作
+  guidelines_title: AI 整理的指引 (基于中国武术段位制)
+  guidelines_help: 来自中国武术段位制系列教程的已核实信息。未核实的项目请您补充。
+  guidelines_source: 来源
+  guidelines_verified: 已核实事实
+  guidelines_pending: 待补充(请您确认)
+  guidelines_view_source: 查看官方资料
+  expert_feedback_title: 您的意见 (自由文字)
+  expert_feedback_help: 修正建议、动作细节补充、阈值变更等任何意见。自动翻译成韩文给开发者。
+  expert_feedback_placeholder: "例如:长拳一段起势不是立正姿势,而是拱手姿势。另外弓步冲拳时后腿应该约 165 度。"
+  expert_feedback_save: 保存意见
+  expert_feedback_saved: 您的意见已保存。
+  expert_feedback_lang: 写作语言
+  select_form: 选择要操作的套路
+  no_form_selected: 请先在上方选择套路。
+  current_takes: 已录制的镜次
+  no_takes: 暂无示范视频,请上传第一个。
+  upload_new: 上传新镜次
+  upload_label: 选择视频文件(mp4, mov)
+  self_rating: 本镜次的自我评分
+  self_rating_help: 您认为这个示范有多准确(100 分 = 完美示范)
+  notes_label: 备注(可选)
+  notes_placeholder: "例:侧面角度、当时状态、特殊情况"
+  process_btn: 提取姿势并保存
+  processing_extract: 正在提取姿势...
+  processing_render: 生成骨架叠加中...
+  processing_save: 保存中...
+  saved_success: 镜次已保存。
+  preview: 预览(骨架叠加)
+  activate_form: 将此套路设为可评分状态
+  activate_help: 一个镜次也可激活,但建议三个以上(用于学习变动范围)。
+  activated: 已激活
+  delete_take: 删除
+  take_label: "镜次 {n}"
+  take_meta: "自我评分 {rating} 分 · {date}"
+
+test_lab:
+  title: 测试
+  subtitle: 上传变化视频,验证 AI 反应是否准确
+  select_form: 测试套路
+  form_not_ready: "此套路尚未激活,请先注册标准视频。"
+  add_test: 新增测试
+  upload_label: 测试视频
+  intent_label: 意图 / 条件
+  intent_placeholder: "例:马步膝盖故意弯到 75°,侧面拍摄,标准示范"
+  expected_label: 期望结果
+  expected_catch: AI 应识别(故意做错)
+  expected_pass: AI 应忽略(标准示范)
+  expected_either: 任意(探索性)
+  tags_label: 标签(逗号分隔)
+  tags_placeholder: "例:马步,膝盖角度,侧面"
+  run_btn: 执行评分
+  results_title: 最近测试结果
+  no_tests: 暂无测试记录,请上传第一个视频。
+  ai_score: AI 评分
+  detected_stances: 识别步型
+  detected_issues: AI 检出的问题
+  no_issues: 未发现明显问题
+  expected: 期望
+  verdict_correct: AI 正确识别
+  verdict_missed: AI 漏检
+  verdict_wrong: AI 误判
+  verdict_pending: 待判定
+  add_comment: 添加评论(自由文字)
+  comment_placeholder: "例:这个膝盖角度本来应该被识别"
+  submit_verdict: 提交判定
+  rerun_all: 全部回归测试(重新评分所有测试)
+  delete: 删除
+
+forms_catalog:
+  title: 套路管理
+  subtitle: 添加或修改一段、二段、三段武术套路
+  list_title: 已注册套路
+  edit_title: 编辑套路
+  add_title: 新增套路
+  field_id: ID(英文小写,下划线)
+  field_dan: 段位
+  field_name_ko: 韩文名称
+  field_name_zh: 中文名称
+  field_name_en: 英文名称
+  field_duration: 预计时长(秒)
+  field_description_ko: 说明(韩文)
+  field_description_zh: 说明(中文)
+  save: 保存
+  cancel: 取消
+  added: 套路已添加。
+  updated: 套路已更新。
+  deleted: 套路已删除。
+
+scoring:
+  total: 总分
+  level_a: A(动作质量)
+  level_b: B(演练水平)
+  level_c: C(难度)
+  out_of: "/ 10"
+  segment: 动作段
+  joint_angle: 关节角度
+  ideal: 标准
+  current: 当前
+  delta: 差值
+  in_range: 范围内
+  borderline: 临界
+  out_of_range: 超出范围
+
+stances:
+  unknown: 未知
+  detected_at: "{time}秒 — {stance}"
+
+translation:
+  original: 原文
+  translated: 译文
+  retranslate: 重新翻译
+  from_zh: 中文 → 韩文
+  from_ko: 韩文 → 中文
+
+common:
+  yes: 是
+  no: 否
+  loading: 加载中...
+  error: 错误
+  back: 返回
+  next: 下一个
+  search: 搜索
+  none: 无
+  required: 必填
+  optional: 可选
+  save: 保存
+  delete: 删除
+  confirm_delete: 确定要删除吗?
+  download: 下载
+  copy: 复制
+  copied: 已复制

@@ -1,0 +1,4 @@
+# Force LF for shell scripts and Dockerfile so they execute correctly in Linux containers
+*.sh text eol=lf
+Dockerfile text eol=lf
+docker/entrypoint.sh text eol=lf
