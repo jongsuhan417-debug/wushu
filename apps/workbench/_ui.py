@@ -23,17 +23,34 @@ def bootstrap() -> None:
 
     # Streamlit Cloud delivers config via st.secrets (not env vars). Mirror it
     # into os.environ so code paths that read env vars keep working unchanged.
-    # Use direct assignment (NOT setdefault) — if a secret is set explicitly,
-    # it should win over any pre-existing env var on the host.
-    # Locally, .env via python-dotenv handles this — st.secrets may be empty.
+    # Walks nested TOML sections too — if someone wraps the secrets in a
+    # [section] header, we still find the keys inside.
     import os
     try:
         import streamlit as st
-        for k, v in dict(st.secrets).items():
-            if isinstance(v, (str, int, float, bool)):
-                os.environ[k] = str(v)
-    except Exception:
-        pass
+
+        def _flatten(node):
+            try:
+                items = node.items()
+            except AttributeError:
+                return
+            for k, v in items:
+                if isinstance(v, (str, int, float, bool)):
+                    os.environ[k] = str(v)
+                else:
+                    _flatten(v)
+
+        _flatten(st.secrets)
+        # Surface a console hint when the storage backend secret is still
+        # absent — visible in Streamlit Cloud's "Manage app → Logs" panel.
+        if not os.environ.get("STORAGE_BACKEND"):
+            print(
+                "[bootstrap] STORAGE_BACKEND not found in secrets — "
+                "videos will resolve against the local filesystem.",
+                flush=True,
+            )
+    except Exception as e:
+        print(f"[bootstrap] secrets bridge skipped: {e!r}", flush=True)
 
 
 bootstrap()
