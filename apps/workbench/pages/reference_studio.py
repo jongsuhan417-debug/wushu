@@ -282,13 +282,24 @@ def _render_take_card(take: dict) -> None:
             elif video and storage.exists(video):
                 st.video(storage.url(video))
             else:
-                # Surface backend + key so we can tell apart "wrong backend",
+                # Surface backend + key + which secrets exist (length only,
+                # never the value) so we can tell apart "wrong backend",
                 # "wrong credentials", and "missing object in R2".
+                import os
                 backend_name = getattr(storage, "backend_name", "?")
                 missing = overlay or video or "(no path)"
+                env_status = {
+                    k: f"len={len(os.environ.get(k, ''))}"
+                    for k in (
+                        "STORAGE_BACKEND", "R2_ENDPOINT", "R2_BUCKET",
+                        "R2_ACCESS_KEY_ID", "R2_SECRET_ACCESS_KEY",
+                    )
+                }
                 st.warning(
-                    f"missing video file — backend=`{backend_name}` "
-                    f"key=`{missing}`"
+                    f"missing video file\n\n"
+                    f"- backend: `{backend_name}`\n"
+                    f"- looked for key: `{missing}`\n"
+                    f"- env (lengths only): `{env_status}`"
                 )
 
             # Prominent re-render CTA right under the video (mobile-friendly)
