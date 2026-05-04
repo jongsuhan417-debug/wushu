@@ -921,12 +921,18 @@ def form_display_name(form: dict) -> str:
     return form["name_zh"] if lang == "zh" else form["name_ko"]
 
 
-def fmt_dt(value: str) -> str:
-    """Format DB timestamp into short locale-friendly string."""
+def fmt_dt(value) -> str:
+    """Format DB timestamp into short locale-friendly string.
+
+    Postgres returns native datetime objects (TIMESTAMPTZ); SQLite returned
+    ISO strings. Accept both shapes so a backend swap doesn't break callers.
+    """
     if not value:
         return ""
+    if isinstance(value, datetime):
+        return value.strftime("%Y-%m-%d %H:%M")
     try:
-        dt = datetime.fromisoformat(value.replace("Z", "+00:00"))
+        dt = datetime.fromisoformat(str(value).replace("Z", "+00:00"))
         return dt.strftime("%Y-%m-%d %H:%M")
-    except (ValueError, AttributeError):
-        return value
+    except (ValueError, AttributeError, TypeError):
+        return str(value)
