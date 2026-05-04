@@ -23,13 +23,15 @@ def bootstrap() -> None:
 
     # Streamlit Cloud delivers config via st.secrets (not env vars). Mirror it
     # into os.environ so code paths that read env vars keep working unchanged.
+    # Use direct assignment (NOT setdefault) — if a secret is set explicitly,
+    # it should win over any pre-existing env var on the host.
     # Locally, .env via python-dotenv handles this — st.secrets may be empty.
     import os
     try:
         import streamlit as st
         for k, v in dict(st.secrets).items():
             if isinstance(v, (str, int, float, bool)):
-                os.environ.setdefault(k, str(v))
+                os.environ[k] = str(v)
     except Exception:
         pass
 
