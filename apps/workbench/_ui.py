@@ -41,8 +41,6 @@ def bootstrap() -> None:
                     _flatten(v)
 
         _flatten(st.secrets)
-        # Surface a console hint when the storage backend secret is still
-        # absent — visible in Streamlit Cloud's "Manage app → Logs" panel.
         if not os.environ.get("STORAGE_BACKEND"):
             print(
                 "[bootstrap] STORAGE_BACKEND not found in secrets — "
@@ -51,6 +49,18 @@ def bootstrap() -> None:
             )
     except Exception as e:
         print(f"[bootstrap] secrets bridge skipped: {e!r}", flush=True)
+
+    # Drop any singletons captured during a previous script run BEFORE the
+    # bridge had a chance to populate the env. Streamlit reruns the script
+    # on every user action but keeps module state, so a stale LocalStorage
+    # cached on the very first run would otherwise stick forever — even
+    # after secrets are correctly configured. Reset and let the next caller
+    # rebuild from current env.
+    try:
+        from core import storage as _storage_mod
+        _storage_mod._STORAGE = None
+    except Exception:
+        pass
 
 
 bootstrap()
