@@ -72,7 +72,6 @@ def render() -> None:
     hero(
         title=t("forms_catalog.title"),
         subtitle=t("forms_catalog.subtitle"),
-        eyebrow="📋",
     )
 
     head = st.columns([3, 1])

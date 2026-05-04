@@ -5,6 +5,7 @@ from typing import Callable, Optional
 import cv2
 
 from .pose_extractor import POSE_CONNECTIONS
+from .scorer import KEY_ANGLES, L, frame_angles
 
 # BGR colors
 COLOR_OK = (120, 200, 100)
@@ -63,12 +64,113 @@ def _draw_skeleton(img, landmarks, w: int, h: int, joint_status: Optional[dict] 
         cv2.circle(img, p, 6, (255, 255, 255), 1, cv2.LINE_AA)
 
 
+# Pill backgrounds (BGR) — saturated colors that read on any video background
+_PILL_BG = {
+    "ok":      (70, 150, 60),    # green
+    "warn":    (45, 130, 220),   # amber
+    "bad":     (60, 60, 200),    # red
+    "neutral": (40, 49, 160),    # brand wine #A03128
+}
+
+
+def _draw_angle_labels(img, landmarks, w: int, h: int, joint_status: Optional[dict] = None) -> None:
+    """Draw each measured joint angle as a high-contrast colored pill badge.
+
+    Pill size scales with frame resolution so the value stays readable when the
+    video is shrunk to fit a narrow column in the UI. Targets ~3% of width.
+    """
+    if not landmarks:
+        return
+    js = joint_status or {}
+    angles = frame_angles(landmarks)
+
+    # Adaptive sizing — calibrated for 1280px wide frames.
+    base = max(w, 720) / 1280.0
+    font = cv2.FONT_HERSHEY_DUPLEX
+    scale = max(0.95, 1.25 * base)
+    thickness = max(2, int(round(2.4 * base)))
+    pad_x = max(12, int(round(16 * base)))
+    pad_y = max(8, int(round(11 * base)))
+    border_w = max(2, int(round(2.2 * base)))
+    shadow_off = max(3, int(round(4 * base)))
+    leader_w = max(2, int(round(2.4 * base)))
+
+    shadow = (0, 0, 0)
+    border = (255, 255, 255)
+    text_color = (255, 255, 255)
+
+    for joint_name, (_, vertex_name, _) in KEY_ANGLES.items():
+        deg = angles.get(joint_name)
+        if deg is None:
+            continue
+        idx = L[vertex_name]
+        lm = landmarks[idx]
+        if lm["visibility"] < 0.4:
+            continue
+        cx = int(lm["x"] * w)
+        cy = int(lm["y"] * h)
+        sev = js.get(idx, "neutral")
+        bg = _PILL_BG.get(sev, _PILL_BG["neutral"])
+
+        text = f"{int(round(deg))}"
+        (tw, th), baseline = cv2.getTextSize(text, font, scale, thickness)
+
+        # Degree symbol drawn as a small open ring (HERSHEY fonts don't render Unicode °)
+        deg_r = max(3, int(round(scale * 5)))
+        deg_gap = max(3, int(round(scale * 4)))
+        deg_total_w = deg_r * 2 + deg_gap
+
+        # Anchor pill upper-right of joint, distance scales with size.
+        offset_x = int(round(22 * base))
+        offset_y = int(round(20 * base))
+        ox = cx + offset_x
+        oy = cy - offset_y
+        x1, y1 = ox - pad_x, oy - th - pad_y
+        x2, y2 = ox + tw + deg_total_w + pad_x, oy + baseline + pad_y - 2
+
+        # Clamp inside frame
+        margin = 4
+        if x2 > w - margin:
+            shift = x2 - (w - margin)
+            x1 -= shift; x2 -= shift; ox -= shift
+        if x1 < margin:
+            shift = margin - x1
+            x1 += shift; x2 += shift; ox += shift
+        if y1 < margin:
+            shift = margin - y1
+            y1 += shift; y2 += shift; oy += shift
+        if y2 > h - margin:
+            shift = y2 - (h - margin)
+            y1 -= shift; y2 -= shift; oy -= shift
+
+        # Leader line from joint dot to pill — confirms which joint the value belongs to.
+        pill_anchor_x = x1 if cx < (x1 + x2) // 2 else x2
+        pill_anchor_y = y2 if cy > (y1 + y2) // 2 else y1
+        cv2.line(img, (cx, cy), (pill_anchor_x, pill_anchor_y),
+                 shadow, leader_w + 2, cv2.LINE_AA)
+        cv2.line(img, (cx, cy), (pill_anchor_x, pill_anchor_y),
+                 bg, leader_w, cv2.LINE_AA)
+
+        # Drop shadow → solid pill → white border → white text
+        cv2.rectangle(img, (x1 + shadow_off, y1 + shadow_off),
+                      (x2 + shadow_off, y2 + shadow_off), shadow, -1, cv2.LINE_AA)
+        cv2.rectangle(img, (x1, y1), (x2, y2), bg, -1, cv2.LINE_AA)
+        cv2.rectangle(img, (x1, y1), (x2, y2), border, border_w, cv2.LINE_AA)
+        cv2.putText(img, text, (ox, oy), font, scale, text_color, thickness, cv2.LINE_AA)
+        # Degree symbol — small open ring at top-right of the number
+        deg_cx = ox + tw + deg_gap + deg_r
+        deg_cy = oy - th + deg_r
+        cv2.circle(img, (deg_cx, deg_cy), deg_r, text_color,
+                   max(1, thickness - 1), cv2.LINE_AA)
+
+
 def render_overlay(
     video_path: Path,
     pose_seq: dict,
     out_path: Path,
     frame_status_func: Optional[Callable[[int, list], Optional[dict]]] = None,
     label_top: Optional[str] = None,
+    show_angles: bool = True,
 ) -> Path:
     """
     Re-encode the input video with skeleton overlay drawn on each frame.
@@ -104,6 +206,9 @@ def render_overlay(
                 per_frame_label = res.get("label")
 
         _draw_skeleton(frame, landmarks, w, h, joint_status)
+
+        if show_angles and landmarks:
+            _draw_angle_labels(frame, landmarks, w, h, joint_status)
 
         # Top-left timecode
         _put_label(frame, f"{idx / fps:5.2f}s", (12, 28), 0.55)

@@ -45,6 +45,12 @@ POSE_CONNECTIONS = [
 ]
 
 
+_MODEL_URL = (
+    "https://storage.googleapis.com/mediapipe-models/pose_landmarker/"
+    "pose_landmarker_full/float16/latest/pose_landmarker_full.task"
+)
+
+
 def _model_path() -> Path:
     env = os.environ.get("WUSHU_POSE_MODEL")
     if env:
@@ -52,13 +58,23 @@ def _model_path() -> Path:
     return DATA_DIR / "models" / "pose_landmarker_full.task"
 
 
+def _ensure_model() -> Path:
+    """Return the local model path, downloading it on first call if missing.
+
+    Allows Streamlit Cloud (clean filesystem on each deploy) to bootstrap
+    the ~10MB model without checking it into git.
+    """
+    target = _model_path()
+    if target.exists():
+        return target
+    import urllib.request
+    target.parent.mkdir(parents=True, exist_ok=True)
+    urllib.request.urlretrieve(_MODEL_URL, target)
+    return target
+
+
 def _build_landmarker():
-    model_path = _model_path()
-    if not model_path.exists():
-        raise FileNotFoundError(
-            f"Pose model not found at {model_path}. "
-            f"Run: python scripts/download_models.py"
-        )
+    model_path = _ensure_model()
     base_options = mp_tasks.BaseOptions(model_asset_path=str(model_path))
     options = mp_vision.PoseLandmarkerOptions(
         base_options=base_options,

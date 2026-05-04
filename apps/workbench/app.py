@@ -26,11 +26,6 @@ with st.sidebar:
         f"""
         <div class="brand">🥋 {t('app.brand')}</div>
         <div class="brand-sub">{t('app.tagline')}</div>
-        <div style='margin-top:6px;font-size:11px;font-weight:600;
-                    background:#3D2F22;color:#F4D9A6;padding:3px 8px;
-                    border-radius:6px;display:inline-block'>
-          {t('app.dev_badge')}
-        </div>
         """,
         unsafe_allow_html=True,
     )

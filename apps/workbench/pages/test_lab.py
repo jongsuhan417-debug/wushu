@@ -219,10 +219,7 @@ def _render_test_card(test: dict) -> None:
                 "either": t("test_lab.expected_either"),
             }.get(test["expected"], test["expected"])
             meta_cols[0].markdown(f"**{t('test_lab.expected')}**: {exp_label}")
-        try:
-            tags_arr = json.loads(test.get("tags") or "[]")
-        except (TypeError, json.JSONDecodeError):
-            tags_arr = []
+        tags_arr = test.get("tags") or []
         if tags_arr:
             tags_html = " ".join(
                 f"<span class='pill pill-info' style='margin-right:4px'>{tag}</span>"
@@ -243,10 +240,7 @@ def _render_test_card(test: dict) -> None:
 
         with body[1]:
             # Issues
-            try:
-                issues = json.loads(test.get("ai_issues") or "[]")
-            except (TypeError, json.JSONDecodeError):
-                issues = []
+            issues = test.get("ai_issues") or []
             st.markdown(f"**{t('test_lab.detected_issues')}**")
             if not issues:
                 st.markdown(
@@ -272,10 +266,7 @@ def _render_test_card(test: dict) -> None:
                     )
 
             # Detected stances
-            try:
-                stances = json.loads(test.get("detected_stances") or "[]")
-            except (TypeError, json.JSONDecodeError):
-                stances = []
+            stances = test.get("detected_stances") or []
             if stances:
                 st.markdown(f"**{t('test_lab.detected_stances')}**")
                 stance_chips = " ".join(
@@ -359,7 +350,6 @@ def render() -> None:
     hero(
         title=t("test_lab.title"),
         subtitle=t("test_lab.subtitle"),
-        eyebrow="🧪",
     )
 
     forms = list_forms()

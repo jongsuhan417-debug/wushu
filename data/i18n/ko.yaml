@@ -108,6 +108,10 @@ reference_studio:
   activate_help: 시범 영상 1개로도 활성화 가능하지만 3개 이상 권장합니다 (변동 범위 학습용).
   activated: 활성화 완료
   delete_take: 삭제
+  rerender_take: 각도 다시 표시 (예전 영상 갱신)
+  rerender_help: 예전에 올린 영상은 각도가 안 보일 수 있어요. 이 버튼을 누르면 새 디자인으로 다시 그려요.
+  rerendering: 영상 다시 그리는 중... (영상 길이의 약 1/3 정도 걸려요)
+  rerendered: 각도 표시 완료! 영상이 새로 로드됩니다
   take_label: "시범 {n}"
   take_meta: "자기 평가 {rating}점 · {date}"
 

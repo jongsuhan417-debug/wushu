@@ -20,15 +20,10 @@ def _md(html: str) -> None:
 
 
 def render() -> None:
-    hero(t("app.brand"), t("app.tagline"))
-
-    # Development-stage notice — visible on every Home visit
-    _md(f"""
-        <div style='background:#FFF8EC;border-left:4px solid #C97A1B;
-                    border-radius:6px;padding:10px 14px;margin-bottom:18px;font-size:13px'>
-        <b>{t('app.dev_badge')}</b> &nbsp; {t('app.dev_notice_short')}
-        </div>
-    """)
+    hero(
+        title=t("app.brand"),
+        subtitle=t("app.tagline"),
+    )
 
     # Pending feedback badge (visible to developer when expert leaves new feedback)
     pending_count = sum(
@@ -36,12 +31,14 @@ def render() -> None:
     )
     if pending_count > 0:
         _md(f"""
-            <div style='background:#B0392B;color:white;border-radius:8px;
-                        padding:12px 16px;margin-bottom:18px;font-size:14px;font-weight:600'>
+            <div style='background:linear-gradient(135deg,#C84938 0%,#A8311E 100%);
+                        color:white;border-radius:12px;
+                        padding:14px 18px;margin:0 0 24px 0;font-size:14px;font-weight:600;
+                        box-shadow:0 4px 12px rgba(192,57,43,0.20)'>
             🔔 {t('home.feedback_pending_badge', count=pending_count)}
-            &nbsp;<small style='font-weight:400;opacity:0.9'>
+            <span style='font-weight:400;opacity:0.9;margin-left:8px'>
             ↓ {t('home.feedback_title')}
-            </small>
+            </span>
             </div>
         """)
 
@@ -49,11 +46,11 @@ def render() -> None:
     has_data = s["references_total"] > 0 or s["tests_total"] > 0
 
     if not has_data:
-        # Empty state — single primary CTA
+        # Empty state — featured CTA
         _md(f"""
             <div class="wushu-cta">
-            <h2>🎥 {t('home.cta_first_title')}</h2>
-            <p>{t('home.cta_first_body')}</p>
+              <h2>{t('home.cta_first_title')}</h2>
+              <p>{t('home.cta_first_body')}</p>
             </div>
         """)
         registered_pages = st.session_state.get("_pages", {})
@@ -62,19 +59,24 @@ def render() -> None:
             cols[0].page_link(
                 registered_pages["reference"],
                 label=t("home.cta_first_btn"),
-                icon="🎥",
                 use_container_width=True,
             )
         if "guide" in registered_pages:
             cols[1].page_link(
                 registered_pages["guide"],
                 label=t("home.cta_guide_btn"),
-                icon="📖",
                 use_container_width=True,
             )
 
+        # Dev-stage notice (full label + body, single source of truth on Home)
+        _md(f"""
+            <div class="wushu-notice" style='margin-top:32px'>
+              <span><b>{t('app.dev_badge')}</b> &nbsp;·&nbsp; {t('app.dev_notice_short')}</span>
+            </div>
+        """)
+
         st.markdown(
-            f"<div style='color:#8C8579;font-size:12px;margin-top:18px'>"
+            f"<div style='color:#9C9489;font-size:12px;margin-top:14px;text-align:center'>"
             f"💡 {t('home.hint_sidebar')}</div>",
             unsafe_allow_html=True,
         )

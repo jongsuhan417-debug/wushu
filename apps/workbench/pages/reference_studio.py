@@ -11,10 +11,10 @@ from core.db import (
     list_forms, get_form, list_reference_takes, add_reference_take,
     delete_reference_take as db_delete_reference_take,
     get_reference_take, update_form_status, update_form_feedback,
-    get_form_guidelines,
+    update_reference_take_overlay, get_form_guidelines,
 )
 from core.i18n import t, current_lang
-from core.pose_extractor import extract_pose_sequence, save_pose_sequence
+from core.pose_extractor import extract_pose_sequence, save_pose_sequence, load_pose_sequence
 from core.visualizer import render_overlay
 from core.translator import translate
 from core.storage import get_storage, video_key, pose_key, overlay_key
@@ -229,10 +229,44 @@ def _delete_take_with_files(take_id: int) -> None:
     db_delete_reference_take(take_id)
 
 
+def _rerender_overlay(take: dict) -> None:
+    """Re-render overlay video for an existing take using stored pose data.
+
+    Writes to a NEW storage key so that mobile browsers cached on the previous
+    URL fetch the fresh video instead of replaying the stale cached copy.
+    The old overlay file is deleted afterward.
+    """
+    storage = get_storage()
+    vkey = take.get("video_path")
+    pkey = take.get("pose_path")
+    old_okey = take.get("overlay_path")
+    if not (vkey and pkey and storage.exists(vkey) and storage.exists(pkey)):
+        raise FileNotFoundError("missing video or pose file")
+
+    with storage.open_local(pkey) as local_pose:
+        pose_seq = load_pose_sequence(local_pose)
+
+    new_uid = uuid.uuid4().hex
+    new_okey = overlay_key("references", take["form_id"], new_uid)
+
+    with tempfile.TemporaryDirectory(prefix="wushu-rerender-") as tmpd:
+        overlay_tmp = Path(tmpd) / "overlay.mp4"
+        with storage.open_local(vkey) as local_video:
+            render_overlay(local_video, pose_seq, overlay_tmp)
+        storage.upload(overlay_tmp, new_okey)
+
+    update_reference_take_overlay(take["id"], new_okey)
+    if old_okey and old_okey != new_okey and storage.exists(old_okey):
+        try:
+            storage.delete(old_okey)
+        except Exception:
+            pass
+
+
 def _render_take_card(take: dict) -> None:
     storage = get_storage()
     with st.container(border=True):
-        cols = st.columns([1.4, 1])
+        cols = st.columns([2.5, 1])
         with cols[0]:
             st.markdown(
                 f"**{t('reference_studio.take_label', n=take['take_number'])}**  ·  "
@@ -250,17 +284,36 @@ def _render_take_card(take: dict) -> None:
             else:
                 st.warning("missing video file")
 
+            # Prominent re-render CTA right under the video (mobile-friendly)
+            if st.button(
+                f"🔄 {t('reference_studio.rerender_take')}",
+                key=f"rerender_take_{take['id']}",
+                type="primary",
+                use_container_width=True,
+                help=t("reference_studio.rerender_help"),
+            ):
+                try:
+                    with st.spinner(t("reference_studio.rerendering")):
+                        _rerender_overlay(take)
+                    st.toast(t("reference_studio.rerendered"), icon="✅")
+                    st.rerun()
+                except Exception as e:
+                    st.error(f"{t('common.error')}: {e}")
+
         with cols[1]:
             if take.get("notes"):
-                st.markdown(f"**📝**")
                 st.markdown(
-                    f"<div style='background:#FFFCF7;border:1px solid #ECE5DC;"
-                    f"border-radius:8px;padding:10px;font-size:13px;'>{take['notes']}</div>",
+                    f"<div style='font-size:12px;color:#9C9489;font-weight:600;"
+                    f"text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px'>"
+                    f"{t('reference_studio.notes_label')}</div>"
+                    f"<div style='background:#FFFAF0;border:1px solid #E8DFCD;"
+                    f"border-radius:8px;padding:10px 12px;font-size:13px;color:#4A413A;"
+                    f"line-height:1.5'>{take['notes']}</div>",
                     unsafe_allow_html=True,
                 )
             st.markdown("")
             if st.button(
-                f"🗑 {t('reference_studio.delete_take')}",
+                t("reference_studio.delete_take"),
                 key=f"del_take_{take['id']}",
                 use_container_width=True,
             ):
@@ -273,7 +326,6 @@ def render() -> None:
     hero(
         title=t("reference_studio.title"),
         subtitle=t("reference_studio.subtitle"),
-        eyebrow="🎥",
     )
 
     forms = list_forms()
