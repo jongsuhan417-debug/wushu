@@ -36,10 +36,20 @@ from core.i18n import current_lang, t  # noqa: E402
 
 
 def ensure_db_seeded() -> None:
-    if not st.session_state.get("_db_ready"):
-        init_db()
-        seed_forms_from_yaml()
-        st.session_state["_db_ready"] = True
+    if st.session_state.get("_db_ready"):
+        return
+    import os
+    if not os.environ.get("SUPABASE_DB_URL"):
+        st.error(
+            "⚠️ **SUPABASE_DB_URL secret이 설정되지 않았습니다.**\n\n"
+            "Streamlit Cloud → 앱 우측 하단 **Manage app → Settings → Secrets** 에서 "
+            "`SUPABASE_DB_URL`을 포함한 비밀 값을 입력 후 앱을 **Reboot** 하세요.\n\n"
+            "예시는 `.streamlit/secrets.toml.example` 참고."
+        )
+        st.stop()
+    init_db()
+    seed_forms_from_yaml()
+    st.session_state["_db_ready"] = True
 
 
 CUSTOM_CSS = """
