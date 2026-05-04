@@ -108,6 +108,8 @@ reference_studio:
   activate_form: 将此套路设为可评分状态
   activate_help: 一个镜次也可激活,但建议三个以上(用于学习变动范围)。
   activated: 已激活
+  deactivate_form: 取消激活 (回到编辑模式)
+  deactivated: 已取消激活 — 可添加/删除视频
   delete_take: 删除
   rerender_take: 重新显示角度 (更新旧视频)
   rerender_help: 旧视频可能没有角度显示。点击此按钮以新设计重新渲染。

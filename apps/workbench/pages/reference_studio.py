@@ -282,7 +282,14 @@ def _render_take_card(take: dict) -> None:
             elif video and storage.exists(video):
                 st.video(storage.url(video))
             else:
-                st.warning("missing video file")
+                # Surface backend + key so we can tell apart "wrong backend",
+                # "wrong credentials", and "missing object in R2".
+                backend_name = getattr(storage, "backend_name", "?")
+                missing = overlay or video or "(no path)"
+                st.warning(
+                    f"missing video file — backend=`{backend_name}` "
+                    f"key=`{missing}`"
+                )
 
             # Prominent re-render CTA right under the video (mobile-friendly)
             if st.button(
@@ -434,14 +441,15 @@ def render() -> None:
                 _cleanup_temp(video_temp_path)
                 st.error(f"{t('common.error')}: {e}")
 
-    # Activate button
+    # Activate / deactivate button
     st.markdown("---")
-    can_activate = len(takes) >= 1 and form["status"] != "ready"
+    is_ready = form["status"] == "ready"
+    can_activate = len(takes) >= 1 and not is_ready
     needed = max(0, RECOMMENDED_TAKES - len(takes))
 
     cols = st.columns([2, 1])
     with cols[0]:
-        if form["status"] == "ready":
+        if is_ready:
             st.success(f"✅  {t('reference_studio.activated')}")
         elif needed > 0:
             st.markdown(
@@ -452,12 +460,26 @@ def render() -> None:
         st.caption(t("reference_studio.activate_help"))
 
     with cols[1]:
-        if st.button(
-            f"✅  {t('reference_studio.activate_form')}",
-            type="primary",
-            disabled=not can_activate,
-            use_container_width=True,
-        ):
-            update_form_status(sel_id, "ready")
-            st.toast(t("reference_studio.activated"), icon="✅")
-            st.rerun()
+        if is_ready:
+            # Deactivate path — drop status back to "recorded" (or "draft" if no takes)
+            if st.button(
+                f"⏸  {t('reference_studio.deactivate_form')}",
+                type="secondary",
+                use_container_width=True,
+                key=f"deactivate_{sel_id}",
+            ):
+                next_status = "recorded" if len(takes) > 0 else "draft"
+                update_form_status(sel_id, next_status)
+                st.toast(t("reference_studio.deactivated"), icon="⏸")
+                st.rerun()
+        else:
+            if st.button(
+                f"✅  {t('reference_studio.activate_form')}",
+                type="primary",
+                disabled=not can_activate,
+                use_container_width=True,
+                key=f"activate_{sel_id}",
+            ):
+                update_form_status(sel_id, "ready")
+                st.toast(t("reference_studio.activated"), icon="✅")
+                st.rerun()

@@ -1,9 +1,14 @@
 """Shared UI helpers — bootstrap, custom CSS, hero header, status pills, ..."""
 import sys
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 
 import streamlit as st
+
+
+# Korea Standard Time (UTC+9, no DST). All timestamps from Postgres come back
+# as TIMESTAMPTZ in UTC; convert here so the UI shows local Seoul time.
+KST = timezone(timedelta(hours=9))
 
 
 def bootstrap() -> None:
@@ -922,17 +927,20 @@ def form_display_name(form: dict) -> str:
 
 
 def fmt_dt(value) -> str:
-    """Format DB timestamp into short locale-friendly string.
+    """Format DB timestamp as short Korea Standard Time string.
 
-    Postgres returns native datetime objects (TIMESTAMPTZ); SQLite returned
-    ISO strings. Accept both shapes so a backend swap doesn't break callers.
+    Accepts both Postgres ``datetime`` (TIMESTAMPTZ → tz-aware) and legacy
+    SQLite ISO strings (treated as UTC if naive).
     """
     if not value:
         return ""
     if isinstance(value, datetime):
-        return value.strftime("%Y-%m-%d %H:%M")
-    try:
-        dt = datetime.fromisoformat(str(value).replace("Z", "+00:00"))
-        return dt.strftime("%Y-%m-%d %H:%M")
-    except (ValueError, AttributeError, TypeError):
-        return str(value)
+        dt = value
+    else:
+        try:
+            dt = datetime.fromisoformat(str(value).replace("Z", "+00:00"))
+        except (ValueError, AttributeError, TypeError):
+            return str(value)
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=timezone.utc)
+    return dt.astimezone(KST).strftime("%Y-%m-%d %H:%M")

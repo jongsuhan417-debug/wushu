@@ -181,50 +181,67 @@ def render_overlay(
     out_path = Path(out_path)
     out_path.parent.mkdir(parents=True, exist_ok=True)
 
+    import imageio_ffmpeg
+
     cap = cv2.VideoCapture(str(video_path))
     fps = pose_seq.get("fps") or cap.get(cv2.CAP_PROP_FPS) or 30.0
     w = int(pose_seq.get("width") or cap.get(cv2.CAP_PROP_FRAME_WIDTH))
     h = int(pose_seq.get("height") or cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
-    fourcc = cv2.VideoWriter_fourcc(*"mp4v")
-    writer = cv2.VideoWriter(str(out_path), fourcc, float(fps), (w, h))
+    # H.264 / yuv420p so the resulting MP4 plays in every browser. (cv2's
+    # default mp4v fourcc produces MPEG-4 Part 2, which Chrome / Firefox /
+    # Safari refuse to play.) imageio-ffmpeg bundles its own ffmpeg binary
+    # so we don't depend on apt installing one.
+    writer = imageio_ffmpeg.write_frames(
+        str(out_path),
+        size=(w, h),
+        fps=float(fps),
+        codec="libx264",
+        pix_fmt_in="bgr24",        # cv2 frames are BGR
+        pix_fmt_out="yuv420p",     # required for browser playback
+        macro_block_size=1,        # allow odd dimensions without auto-resize
+        quality=7,                 # 0..10  (~CRF 23-ish at 7)
+        ffmpeg_log_level="error",
+    )
+    writer.send(None)              # initialize the generator
 
     frames = pose_seq.get("frames", [])
     idx = 0
-    while True:
-        ok, frame = cap.read()
-        if not ok:
-            break
+    try:
+        while True:
+            ok, frame = cap.read()
+            if not ok:
+                break
 
-        landmarks = frames[idx].get("landmarks") if idx < len(frames) else None
-        joint_status = None
-        per_frame_label = None
-        if frame_status_func and landmarks:
-            res = frame_status_func(idx, landmarks)
-            if res:
-                joint_status = res.get("joint_status")
-                per_frame_label = res.get("label")
+            landmarks = frames[idx].get("landmarks") if idx < len(frames) else None
+            joint_status = None
+            per_frame_label = None
+            if frame_status_func and landmarks:
+                res = frame_status_func(idx, landmarks)
+                if res:
+                    joint_status = res.get("joint_status")
+                    per_frame_label = res.get("label")
 
-        _draw_skeleton(frame, landmarks, w, h, joint_status)
+            _draw_skeleton(frame, landmarks, w, h, joint_status)
 
-        if show_angles and landmarks:
-            _draw_angle_labels(frame, landmarks, w, h, joint_status)
+            if show_angles and landmarks:
+                _draw_angle_labels(frame, landmarks, w, h, joint_status)
 
-        # Top-left timecode
-        _put_label(frame, f"{idx / fps:5.2f}s", (12, 28), 0.55)
+            # Top-left timecode
+            _put_label(frame, f"{idx / fps:5.2f}s", (12, 28), 0.55)
 
-        # Top-right user label (e.g. take number)
-        if label_top:
-            (tw, th), _ = cv2.getTextSize(label_top, cv2.FONT_HERSHEY_DUPLEX, 0.55, 1)
-            _put_label(frame, label_top, (w - tw - 18, 28), 0.55)
+            # Top-right user label (e.g. take number)
+            if label_top:
+                (tw, th), _ = cv2.getTextSize(label_top, cv2.FONT_HERSHEY_DUPLEX, 0.55, 1)
+                _put_label(frame, label_top, (w - tw - 18, 28), 0.55)
 
-        # Bottom-left per-frame label (e.g. detected stance)
-        if per_frame_label:
-            _put_label(frame, per_frame_label, (12, h - 16), 0.6)
+            # Bottom-left per-frame label (e.g. detected stance)
+            if per_frame_label:
+                _put_label(frame, per_frame_label, (12, h - 16), 0.6)
 
-        writer.write(frame)
-        idx += 1
-
-    cap.release()
-    writer.release()
+            writer.send(frame)
+            idx += 1
+    finally:
+        cap.release()
+        writer.close()
     return out_path

@@ -107,6 +107,8 @@ reference_studio:
   activate_form: 이 품세를 채점 가능 상태로 활성화
   activate_help: 시범 영상 1개로도 활성화 가능하지만 3개 이상 권장합니다 (변동 범위 학습용).
   activated: 활성화 완료
+  deactivate_form: 활성화 해제 (수정 모드로)
+  deactivated: 활성화 해제됨 — 영상 추가/삭제 가능
   delete_take: 삭제
   rerender_take: 각도 다시 표시 (예전 영상 갱신)
   rerender_help: 예전에 올린 영상은 각도가 안 보일 수 있어요. 이 버튼을 누르면 새 디자인으로 다시 그려요.
